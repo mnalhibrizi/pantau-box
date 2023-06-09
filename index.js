@@ -5,7 +5,7 @@ const multer = require('multer');
 
 
 require('dotenv').config()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT
 
 app.use(express.json())
 

@@ -10,14 +10,12 @@ const path = require('path');
 const { Storage } = require('@google-cloud/storage');
 
 const db = require('../lib/db');
-const upload = multer({ dest: 'uploads/' });
-const userMiddleware = require('../Middleware/users');
+const upload = multer({ dest: process.env.TMP_UPLOAD_FOLDER });
 
 const bucketName = process.env.STORAGE_BUCKET_NAME;
-const keyFilename = path.join('./pantau-box-storage-key.json');
 const storage = new Storage({
-  keyFilename: keyFilename,
-  projectId: process.env.PROJECT_ID, 
+    projectId: process.env.PROJECT_ID,
+    credentials: require(process.env.STORAGE_KEY_LOCATION)
 });
 const bucket = storage.bucket(bucketName);
 
@@ -93,7 +91,7 @@ router.post('/upload', upload.single('photo'), async (req, res) => {
       return res.status(200).json({ error: false, message: 'Photo uploaded successfully', imageUrl });
     } catch (error) {
       console.error('Error uploading photo:', error);
-      return res.status(500).json({ error: true, message: 'Internal server error' });
+      return res.status(500).json({ error: true, message: error.message });
     }
 });
 
